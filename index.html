@@ -122,12 +122,7 @@
         </div>
     </div>
 
-  <div class="printable-none">
-    <footer style="display: flex; width: 100vw; justify-content: center; font-size: x-small; position: fixed; bottom: 10px">
-      <span>Desarrollado por: </span><a href="https://avilapro.github.io" target="_blank" style="text-decoration: none; color: black; font-weight: bold; "> AvilaPro. </a>
-    </footer>
-  </div>
-
+    <!-- El pie de página se ha eliminado y la información del autor se ha movido a los metadatos para evitar conflictos de impresión -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Get all necessary elements from the DOM
@@ -139,17 +134,17 @@
             const errorMessage = document.getElementById('error-message');
 
             const nombreInput = document.getElementById('nombre-completo');
-            const docTipoInput = document.getElementById('doc-tipo'); // New: Select for document type
+            const docTipoInput = document.getElementById('doc-tipo'); // Select for document type
             const cedulaInput = document.getElementById('cedula');
-            const monedaInput = document.getElementById('moneda'); // New: Select for currency
+            const monedaInput = document.getElementById('moneda'); // Select for currency
             const montoInput = document.getElementById('monto');
             const procedenciaInput = document.getElementById('procedencia');
 
             const docNombre = document.getElementById('doc-nombre');
-            const docTipoSpan = document.getElementById('doc-tipo'); // New: Span for document type in the document
+            const docTipoSpan = document.getElementById('doc-tipo'); // Span for document type in the document
             const docCedula = document.getElementById('doc-cedula');
             const docMonto = document.getElementById('doc-monto');
-            const docMonedaSpan = document.getElementById('doc-moneda'); // New: Span for currency in the document
+            const docMonedaSpan = document.getElementById('doc-moneda'); // Span for currency in the document
             const docProcedencia = document.getElementById('doc-procedencia');
             const docFecha = document.getElementById('doc-fecha');
 
