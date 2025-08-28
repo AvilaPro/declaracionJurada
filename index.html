@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pagina Web para crear una declaracion Jurada de Origen de Fondos. AvilaPro" >
+    <meta name="author" content="AvilaPro">
+    <title>Declaración Jurada del Cliente - AvilaPro</title>
+    <!-- Incluye la fuente 'Inter' de Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Incluye el framework Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Estilos específicos para la impresión, ocultan todo excepto el documento */
+        @media print {
+            body > *:not(.printable-area) {
+                display: none !important;
+            }
+            .printable-area {
+                margin: 0;
+                padding: 0;
+                box-shadow: none !important;
+                background-color: white !important;
+                width: 100%;
+                min-height: 100vh;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen py-10">
+    <div id="app-container" class="bg-white p-8 md:p-12 rounded-xl shadow-lg w-11/12 md:w-3/4 lg:w-2/3 max-w-4xl transition-all duration-300">
+
+        <!-- Contenedor del Formulario -->
+        <div id="form-container" class="space-y-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-6">Declaración Jurada</h1>
+            <p class="text-center text-gray-600 mb-8">Por favor, complete los datos del cliente para generar la declaración.</p>
+
+            <!-- Campo: Nombre Completo -->
+            <div>
+                <label for="nombre-completo" class="block text-sm font-medium text-gray-700">Nombre Completo</label>
+                <input type="text" id="nombre-completo" placeholder="Nombre completo del cliente" class="mt-1 block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+            </div>
+
+            <!-- Campo: Número de Cédula con select para el tipo de documento -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Documento de Identidad</label>
+                <div class="mt-1 flex items-stretch space-x-2">
+                    <select id="doc-tipo" class="px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                        <option value="V">V</option>
+                        <option value="E">E</option>
+                        <option value="J">J</option>
+                        <option value="P">P</option>
+                        <option value="G">G</option>
+                    </select>
+                    <input type="text" id="cedula" placeholder="12345678" class="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                </div>
+            </div>
+
+            <!-- Campo: Monto de los Fondos con select para la moneda -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Monto de los Fondos</label>
+                <div class="mt-1 flex items-stretch space-x-2">
+                    <select id="moneda" class="px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                        <option value="Bolívares">Bs.</option>
+                        <option value="Dólares">USD</option>
+                        <option value="Euros">EUR</option>
+                        <option value="Otra">Otra</option>
+                    </select>
+                    <input type="text" id="monto" placeholder="Ej. 1.000,00" class="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                </div>
+            </div>
+
+            <!-- Campo: Procedencia de los Fondos -->
+            <div>
+                <label for="procedencia" class="block text-sm font-medium text-gray-700">Procedencia de los Fondos</label>
+                <textarea id="procedencia" rows="3" placeholder="Ej. Ahorros personales, venta de un inmueble, etc." class="mt-1 block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"></textarea>
+            </div>
+
+            <!-- Mensaje de Error -->
+            <div id="error-message" class="text-center text-red-600 font-medium hidden">
+                Por favor, complete todos los campos.
+            </div>
+
+            <!-- Botón para generar la declaración -->
+            <button id="generar-btn" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                Generar Declaración
+            </button>
+        </div>
+
+        <!-- Contenedor de la Declaración Jurada (inicialmente oculto) -->
+        <div id="document-container" class="printable-area hidden">
+            <h1 class="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-8">Declaración Jurada</h1>
+            <div class="text-lg text-gray-700 leading-relaxed space-y-4">
+                <p>Yo, <span id="doc-nombre" class="font-bold underline"></span>, mayor de edad, con cédula de identidad número <span id="doc-tipo" class="font-bold underline"></span>-<span id="doc-cedula" class="font-bold underline"></span>, actuando en mi propio nombre y derecho, por medio de la presente, declaro bajo juramento que la información aquí contenida es verdadera y correcta.</p>
+                <p>Declaro formalmente que la procedencia de los fondos que ascienden a un total de <span id="doc-monto" class="font-bold underline"></span> en <span id="doc-moneda" class="font-bold underline"></span>, provienen legítimamente de <span id="doc-procedencia" class="font-bold underline"></span>.</p>
+                <p>Manifiesto y declaro que los fondos antes mencionados no tienen relación con actividades ilícitas y que poseo los documentos que comprueban la legalidad de los mismos. Me comprometo a proporcionar dichos documentos en caso de que sean solicitados.</p>
+                <p>Esta declaración se emite en el día de hoy, <span id="doc-fecha" class="font-bold underline"></span>, para los fines que el interesado considere pertinentes.</p>
+            </div>
+            
+            <div class="mt-16 flex flex-col items-center">
+                <div class="w-2/3 md:w-1/2 h-px bg-gray-400"></div>
+                <p class="text-center text-gray-800 font-semibold mt-2">Firma del Cliente</p>
+            </div>
+
+            <!-- Botones de acción para el documento -->
+            <div class="flex justify-center mt-12 space-x-4">
+                <button id="imprimir-btn" class="py-3 px-6 rounded-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                    Imprimir
+                </button>
+                <button id="volver-btn" class="py-3 px-6 rounded-lg text-sm font-semibold text-gray-700 border border-gray-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition duration-150 ease-in-out">
+                    Volver
+                </button>
+            </div>
+        </div>
+    </div>
+
+  <footer style="display: flex; width: 100vw; justify-content: center; font-size: x-small; position: fixed; bottom: 10px" class="print-none">
+    <span>Desarrollado por: </span><a href="https://avilapro.github.io" target="_blank" style="text-decoration: none; color: black; font-weight: bold; "> AvilaPro. </a>
+  </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get all necessary elements from the DOM
+            const formContainer = document.getElementById('form-container');
+            const documentContainer = document.getElementById('document-container');
+            const generarBtn = document.getElementById('generar-btn');
+            const imprimirBtn = document.getElementById('imprimir-btn');
+            const volverBtn = document.getElementById('volver-btn');
+            const errorMessage = document.getElementById('error-message');
+
+            const nombreInput = document.getElementById('nombre-completo');
+            const docTipoInput = document.getElementById('doc-tipo'); // New: Select for document type
+            const cedulaInput = document.getElementById('cedula');
+            const monedaInput = document.getElementById('moneda'); // New: Select for currency
+            const montoInput = document.getElementById('monto');
+            const procedenciaInput = document.getElementById('procedencia');
+
+            const docNombre = document.getElementById('doc-nombre');
+            const docTipoSpan = document.getElementById('doc-tipo'); // New: Span for document type in the document
+            const docCedula = document.getElementById('doc-cedula');
+            const docMonto = document.getElementById('doc-monto');
+            const docMonedaSpan = document.getElementById('doc-moneda'); // New: Span for currency in the document
+            const docProcedencia = document.getElementById('doc-procedencia');
+            const docFecha = document.getElementById('doc-fecha');
+
+            // Function to handle the generation of the document
+            generarBtn.addEventListener('click', () => {
+                const nombre = nombreInput.value.trim();
+                const docTipo = docTipoInput.value; // Get the selected document type
+                const cedula = cedulaInput.value.trim();
+                const moneda = monedaInput.value; // Get the selected currency
+                const monto = montoInput.value.trim();
+                const procedencia = procedenciaInput.value.trim();
+
+                // Check if any field is empty
+                if (!nombre || !cedula || !monto || !procedencia) {
+                    errorMessage.classList.remove('hidden');
+                    return;
+                }
+
+                // Hide error message if all fields are valid
+                errorMessage.classList.add('hidden');
+
+                // Populate the document with the form data
+                docNombre.textContent = nombre;
+                docTipoSpan.textContent = docTipo; // Set the document type
+                docCedula.textContent = cedula;
+                docMonto.textContent = monto;
+                docMonedaSpan.textContent = moneda.toLowerCase(); // Set the currency in lowercase
+                docProcedencia.textContent = procedencia;
+                
+                // Get the current date in Spanish format
+                const today = new Date();
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                docFecha.textContent = today.toLocaleDateString('es-ES', options);
+
+                // Show the document and hide the form
+                formContainer.classList.add('hidden');
+                documentContainer.classList.remove('hidden');
+            });
+
+            // Function to handle printing
+            imprimirBtn.addEventListener('click', () => {
+                window.print();
+            });
+
+            // Function to go back to the form
+            volverBtn.addEventListener('click', () => {
+                // Clear the inputs when returning to the form
+                nombreInput.value = '';
+                docTipoInput.value = 'V';
+                cedulaInput.value = '';
+                monedaInput.value = 'Bolívares';
+                montoInput.value = '';
+                procedenciaInput.value = '';
+
+                // Hide the document and show the form
+                documentContainer.classList.add('hidden');
+                formContainer.classList.remove('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
