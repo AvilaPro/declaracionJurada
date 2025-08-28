@@ -21,16 +21,31 @@
 
         /* Estilos específicos para la impresión, ocultan todo excepto el documento */
         @media print {
-            body > *:not(.printable-area) {
+            #form-container,
+            #imprimir-btn,
+            #volver-btn {
                 display: none !important;
             }
-            .printable-area {
+            #document-container {
                 margin: 0;
-                padding: 0;
+                padding: 20px;
                 box-shadow: none !important;
                 background-color: white !important;
                 width: 100%;
                 min-height: 100vh;
+            }
+            #app-container {
+                box-shadow: none !important;
+                background-color: white !important;
+                padding: 0;
+                margin: 0;
+                width: 100%;
+                max-width: none;
+            }
+            body {
+                background-color: white !important;
+                margin: 0;
+                padding: 0;
             }
         }
     </style>
@@ -99,7 +114,7 @@
         <div id="document-container" class="printable-area hidden">
             <h1 class="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-8">Declaración Jurada</h1>
             <div class="text-lg text-gray-700 leading-relaxed space-y-4">
-                <p>Yo, <span id="doc-nombre" class="font-bold underline"></span>, mayor de edad, con cédula de identidad número <span id="doc-tipo" class="font-bold underline"></span>-<span id="doc-cedula" class="font-bold underline"></span>, actuando en mi propio nombre y derecho, por medio de la presente, declaro bajo juramento que la información aquí contenida es verdadera y correcta.</p>
+                <p>Yo, <span id="doc-nombre" class="font-bold underline"></span>, mayor de edad, con cédula de identidad número <span id="doc-tipo-display" class="font-bold underline"></span>-<span id="doc-cedula" class="font-bold underline"></span>, actuando en mi propio nombre y derecho, por medio de la presente, declaro bajo juramento que la información aquí contenida es verdadera y correcta.</p>
                 <p>Declaro formalmente que la procedencia de los fondos que ascienden a un total de <span id="doc-monto" class="font-bold underline"></span> en <span id="doc-moneda" class="font-bold underline"></span>, provienen legítimamente de <span id="doc-procedencia" class="font-bold underline"></span>.</p>
                 <p>Manifiesto y declaro que los fondos antes mencionados no tienen relación con actividades ilícitas y que poseo los documentos que comprueban la legalidad de los mismos. Me comprometo a proporcionar dichos documentos en caso de que sean solicitados.</p>
                 <p>Esta declaración se emite en el día de hoy, <span id="doc-fecha" class="font-bold underline"></span>, para los fines que el interesado considere pertinentes.</p>
@@ -141,7 +156,7 @@
             const procedenciaInput = document.getElementById('procedencia');
 
             const docNombre = document.getElementById('doc-nombre');
-            const docTipoSpan = document.getElementById('doc-tipo'); // Span for document type in the document
+            const docTipoSpan = document.getElementById('doc-tipo-display'); // Span for document type in the document
             const docCedula = document.getElementById('doc-cedula');
             const docMonto = document.getElementById('doc-monto');
             const docMonedaSpan = document.getElementById('doc-moneda'); // Span for currency in the document
